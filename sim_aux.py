@@ -55,20 +55,25 @@ import sim_para
 number_loop=sim_para.number_loop
 number_year=sim_para.number_year
 sim_mark=sim_para.sim_mark
-max_year=31
-base_year=2019
-move_age=69
+max_year=sim_para.max_year
+base_year=sim_para.base_year
+start_year=sim_para.start_year
+move_age=sim_para.move_age
+number_region=sim_para.number_region
+maxage=sim_para.maxage
+range_fertility=sim_para.range_fertility
+move_max=sim_para.move_max
+
 
 pd.set_option('float_format', '{:f}'.format)
 
-# path = os.path.expanduser('/ssb/stamme02/regfram/sim/wk48/g2020')
-path = os.path.expanduser('~/Population/g2020')
+# path = os.path.expanduser('/ssb/stamme02/regfram/sim/wk48/g2022')
+path = sim_para.path
 # path="C:\\Users\\jia\\Dropbox\\PopulationProjection\\Population\\"
 # path="C:\\Users\\sal\\Dropbox\\Work\\PopulationProjection\\"
 
 
-maxage=120
-range_fertility=49-15+1
+
 # bins=maxage//5
 bins=maxage
 
@@ -76,7 +81,10 @@ bins=maxage
 
 ## in this version, we are on county levels
 
-number_region=356
+print("baseyear is set to: ", base_year)
+print("path is set to: ", path)
+
+
 p_region=np.zeros(number_region)
 ind_id=0
 
@@ -94,7 +102,7 @@ class individual(object):
         # age_im:  age of immigration, native -1
         status_birth: [0,1] 0:normal, 1, giving birth
         status:  [0,1, 2], 0:normal, 1 dead 2, outmigrate, 3 internal movement
-        time_index: year of simulation. initial year = -1 
+        time_index: year of simulation. base_year = -1   
         
     """
     
@@ -134,17 +142,22 @@ class individual(object):
             self.status_birth=1*birth
         return self
                  
+    # def group_link(self, table_link_a, table_link_r):
+        # sex=self.sex
+        # age=self.age
+        # region=self.region
+        # agesex_gr=table_link_a[sex,age]
+        # # if region=356 then immigrants, and origin_gr is set to zero
+        # origin_gr=table_link_r[region]
+        # #if region==number_region:
+        # #    print('origin group for immigrant is set to ', origin_gr)
+        # return [origin_gr, agesex_gr]
     def group_link(self, table_link_a, table_link_r):
         sex=self.sex
         age=self.age
         region=self.region
         agesex_gr=table_link_a[sex,age]
-        # if region=356 then immigrants, and origin_gr is set to zero
-        origin_gr=table_link_r[region]
-        #if region==number_region:
-        #    print('origin group for immigrant is set to ', origin_gr)
-        return [origin_gr, agesex_gr]
-        
+        return [region, agesex_gr]        
     
      
     def death_move_outmigrate(self, mortality_table, outmigration_table, adjust_factor, move_table):
@@ -189,7 +202,7 @@ class individual(object):
         return self
              
     
-    def move_assign(self, mov_mat,table_link_a, table_link_r):
+    def move_assign(self, mov_mat,table_link_a,table_link_r):
         ## move or not
         sex=self.sex
         age=self.age
@@ -203,9 +216,14 @@ class individual(object):
             ## marks the old region before moving
             self.region_old=self.region
             ## destination
+            ## [origin_gr, agesex_gr]=self.group_link(table_link_a, table_link_r) 
             [origin_gr, agesex_gr]=self.group_link(table_link_a, table_link_r) 
             ## origin_gr, origin region; agesex_gr, age/sex group
-            move_prob=mov_mat[time_index][int(origin_gr), int(agesex_gr),:]
+            # origin_gr for region=356 (number_region) is set to zero by default
+            time_index_temp=time_index
+            if (time_index>move_max-start_year):
+                time_index_temp=move_max-start_year 
+            move_prob=mov_mat[time_index_temp][int(origin_gr), int(agesex_gr),:]
             region_new=np.random.choice(number_region,p=move_prob)
             self.region=region_new
         return self
@@ -469,7 +487,7 @@ class model(object):
                  move_table=[np.zeros((number_region, 2, move_age+1)) for i in range(max_year)],
                  im_dist_table=[np.zeros((2*(move_age+1))) for i in range(max_year)],
                  im_size=np.zeros(max_year),em_size=np.zeros(max_year),
-                 mov_mat=[np.zeros((20,20,number_region)) for i in range(max_year)],
+                 mov_mat=[np.zeros((number_region+1,20,number_region)) for i in range(move_max-start_year+1)],
                  table_link_a=np.zeros((2, maxage)), 
                  table_link_r=np.zeros((number_region+1))) :                
                      
@@ -491,7 +509,7 @@ class model(object):
         #print(data_in)
         for index, row in data_in.iterrows():
             # index_temp starts at zero
-            index_temp=int(row.year-base_year-1)
+            index_temp=int(row.year-start_year)
             # region: 0-355
             r=int(row.region)
             #age starts from 15
@@ -502,7 +520,7 @@ class model(object):
         datafile=path+'/'+file
         data_in=pd.read_csv(datafile)
         for index, row in data_in.iterrows():
-            index_temp=int(row.year-base_year-1)
+            index_temp=int(row.year-start_year)
             # region: 1-356
             r=int(row.region)
             # sex=1 or 2
@@ -517,7 +535,7 @@ class model(object):
         data_in=pd.read_csv(datafile)  
         #print(data_in)
         for index, row in data_in.iterrows():
-            index_temp=int(row.year-base_year-1)
+            index_temp=int(row.year-start_year)
             # region: 1-366
             r=int(row.region)
             # sex=1 or 2
@@ -533,7 +551,7 @@ class model(object):
         datafile=path+'/'+file
         data_in=pd.read_csv(datafile)
         for index, row in data_in.iterrows():
-            index_temp=int(row.year-base_year-1)
+            index_temp=int(row.year-start_year)
             s=int(row.sex)-1
             a=int(row.age)        
             self.im_dist_table[index_temp][s*(move_age+1)+a]=float(row.pr_immigrant)
@@ -542,7 +560,7 @@ class model(object):
         datafile=path+'/'+file
         data_in=pd.read_csv(datafile)
         for index, row in data_in.iterrows():
-            index_temp=int(row.year-base_year-1)       
+            index_temp=int(row.year-start_year)       
             self.im_size[index_temp]=(row.tot_immigrants)
             self.em_size[index_temp]=(row.tot_emigrants)
     
@@ -551,10 +569,10 @@ class model(object):
         data_in=pd.read_csv(datafile)  
         #print(data_in)
         for index, row in data_in.iterrows():
-            index_temp=int(row.year-base_year-1)
+            index_temp=int(row.year-start_year)
             s=int(row.agesexgr)-1
-            a=int(row.origin_index)
-            r=int(row.region)
+            a=int(row.region)
+            r=int(row.d_region)
             # a, original region, s age and gender group, r, destination region        
             self.mov_mat[index_temp][a,s,r]=float(row.prob)
             
@@ -566,13 +584,13 @@ class model(object):
             a=int(row.age)        
             self.table_link_a[s,a]=int(row.agesexgr-1)    
             
-    def set_link_r(self, file):
-        datafile=path+'/'+file
-        data_in=pd.read_csv(datafile)
-        for index, row in data_in.iterrows():
-            r=int(row.region)        
-            self.table_link_r[r]=int(row.origin_index)
-        # region=356 (number_region) is set to zero by default             
+    # def set_link_r(self, file):
+        # datafile=path+'/'+file
+        # data_in=pd.read_csv(datafile)
+        # for index, row in data_in.iterrows():
+            # r=int(row.region)        
+            # self.table_link_r[r]=int(row.origin_index)
+        # # region=356 (number_region) is set to zero by default             
 
             
     
@@ -595,11 +613,11 @@ testmodel.set_immigration_dist("distr_immigration.csv")
 testmodel.set_im_size("tot_migration.csv")
 
 # internal moving matrix
-testmodel.set_mov_mat("mov_mat_new.csv")
+testmodel.set_mov_mat("mov_mat.csv")
 
 # the link information 
 testmodel.set_link_a("link_a.csv")
-testmodel.set_link_r("link_r.csv")
+# testmodel.set_link_r("link_r.csv")
 
 # check the sum of destination probability sum up to 1
 print("immigrants: probablity check", testmodel.im_dist_table[0][:].sum())
