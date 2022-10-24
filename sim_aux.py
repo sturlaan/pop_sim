@@ -48,6 +48,7 @@ import math
 import multiprocessing as mp
 import time
 import sim_para
+from dapla import FileClient
 
 # number of simulations and total year of projection 
 # is defined in sim_para.py
@@ -63,6 +64,7 @@ number_region=sim_para.number_region
 maxage=sim_para.maxage
 range_fertility=sim_para.range_fertility
 move_max=sim_para.move_max
+workpath=sim_para.workpath
 
 
 pd.set_option('float_format', '{:f}'.format)
@@ -82,8 +84,8 @@ bins=maxage
 ## in this version, we are on county levels
 
 print("baseyear is set to: ", base_year)
-print("path is set to: ", path)
-
+print("localpath is set to: ", path)
+print("data will be saved to: ", workpath)
 
 p_region=np.zeros(number_region)
 ind_id=0
@@ -505,7 +507,8 @@ class model(object):
         
     def set_fertility(self, file):
         datafile=path+'/'+file
-        data_in=pd.read_csv(datafile)  
+        data_in=pd.read_csv(datafile) 
+        #data_in=FileClient.load_csv_to_pandas(f"{datafile}") 
         #print(data_in)
         for index, row in data_in.iterrows():
             # index_temp starts at zero
@@ -519,6 +522,7 @@ class model(object):
     def set_mortality(self, file):
         datafile=path+'/'+file
         data_in=pd.read_csv(datafile)
+        #data_in=FileClient.load_csv_to_pandas(f"{datafile}") 
         for index, row in data_in.iterrows():
             index_temp=int(row.year-start_year)
             # region: 1-356
@@ -533,6 +537,7 @@ class model(object):
     def set_migration(self, file):
         datafile=path+'/'+file
         data_in=pd.read_csv(datafile)  
+        #data_in= FileClient.load_csv_to_pandas(f"{datafile}") 
         #print(data_in)
         for index, row in data_in.iterrows():
             index_temp=int(row.year-start_year)
@@ -550,6 +555,7 @@ class model(object):
     def set_immigration_dist(self, file):
         datafile=path+'/'+file
         data_in=pd.read_csv(datafile)
+        #data_in= FileClient.load_csv_to_pandas(f"{datafile}") 
         for index, row in data_in.iterrows():
             index_temp=int(row.year-start_year)
             s=int(row.sex)-1
@@ -559,6 +565,7 @@ class model(object):
     def set_im_size(self, file):
         datafile=path+'/'+file
         data_in=pd.read_csv(datafile)
+        #data_in= FileClient.load_csv_to_pandas(f"{datafile}") 
         for index, row in data_in.iterrows():
             index_temp=int(row.year-start_year)       
             self.im_size[index_temp]=(row.tot_immigrants)
@@ -567,6 +574,7 @@ class model(object):
     def set_mov_mat(self, file):
         datafile=path+'/'+file
         data_in=pd.read_csv(datafile)  
+        #data_in= FileClient.load_csv_to_pandas(f"{datafile}") 
         #print(data_in)
         for index, row in data_in.iterrows():
             index_temp=int(row.year-start_year)
@@ -579,6 +587,7 @@ class model(object):
     def set_link_a(self, file):
         datafile=path+'/'+file
         data_in=pd.read_csv(datafile)
+        #data_in= FileClient.load_csv_to_pandas(f"{datafile}") 
         for index, row in data_in.iterrows():
             s=int(row.sex)-1
             a=int(row.age)        
@@ -645,7 +654,8 @@ def setup_individual(r,s,a):
 
 def generate_population(population, file):
     datafile=path+'/'+file
-    data_in=pd.read_csv(datafile)  
+    data_in=pd.read_csv(datafile) 
+    #data_in= FileClient.load_csv_to_pandas(f"{datafile}") 
     #print(data_in)
     population.member=[]
     for index, row in data_in.iterrows():
@@ -705,14 +715,11 @@ def population_sim(list_in):
         output_fertile_actual.append(population.women_fertile_actual)
        
     res=[output, output_im, output_n_newborn, output_dead, output_out, output_move, output_fertile, output_fertile_actual]
-    
-    file=open(path+'/'+'sim_out'+sim_mark+str(sim_index)+'.pkl', 'wb')
-    
-    pickle.dump(res, file, protocol=4)
-    
-    file.close()
-    
-    [output, output_im, output_n_newborn, output_dead, output_out, output_move]
+
+    fs = FileClient.get_gcs_file_system()
+
+    with fs.open(workpath+'/'+'sim_out'+sim_mark+str(sim_index)+'.pkl', mode='wb') as file:
+        pickle.dump(res, file, protocol=4)
 
     return sim_index
 

@@ -1,11 +1,15 @@
 import multiprocessing as mp
-import os 
+#import os 
 
-number_loop=1000
+number_loop=600
 number_year=29
 
 
-path=os.path.expanduser('~/Population/g2022')
+# path=os.path.expanduser('~/Population/g2022')
+#path='ssb-prod-forsk-sim-befram-data-synk-opp/rawdata'
+path='.'
+workpath = 'ssb-prod-forsk-sim-befram-data-produkt'
+outpath='ssb-prod-forsk-sim-befram-data-synk-ned'
 
 # the projection uses the end year population information at the "base_year";
 # note that in the population.csv this year is corresponds to "year==base_year+1"
@@ -28,6 +32,6 @@ range_fertility=49-15+1
 ## estimation related 
 total_core=mp.cpu_count()
 number_core=40
-sim_mark="new"
+sim_mark="dapla_"
 
 print('total number of available CPUs is', total_core)
