@@ -1,7 +1,7 @@
 import multiprocessing as mp
 #import os 
 
-number_loop=600
+number_loop=20
 number_year=29
 
 
@@ -31,7 +31,7 @@ range_fertility=49-15+1
 
 ## estimation related 
 total_core=mp.cpu_count()
-number_core=40
-sim_mark="dapla_"
+number_core=10
+sim_mark="daplg"
 
 print('total number of available CPUs is', total_core)

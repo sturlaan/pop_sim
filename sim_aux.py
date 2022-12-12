@@ -65,7 +65,7 @@ maxage=sim_para.maxage
 range_fertility=sim_para.range_fertility
 move_max=sim_para.move_max
 workpath=sim_para.workpath
-
+import logging
 
 pd.set_option('float_format', '{:f}'.format)
 
@@ -74,7 +74,8 @@ path = sim_para.path
 # path="C:\\Users\\jia\\Dropbox\\PopulationProjection\\Population\\"
 # path="C:\\Users\\sal\\Dropbox\\Work\\PopulationProjection\\"
 
-
+logger = logging.getLogger("IPKernelApp")
+print("log starts.")
 
 # bins=maxage//5
 bins=maxage
@@ -682,44 +683,50 @@ print("initial population generated")
 # simulation function based on in_population
 
 def population_sim(list_in):
+    try: 
+        sim_index=list_in[0]
+        # important to reseed, otherwise will get same outcome
+        np.random.seed()
+        # simulate the model
+        model=testmodel
+        # use deepcopy to ensure that all simulation start with the 
+        # same baseline population 
+        population=copy.deepcopy(list_in[1])
 
-    sim_index=list_in[0]
-    # important to reseed, otherwise will get same outcome
-    np.random.seed()
-    # simulate the model
-    model=testmodel
-    # use deepcopy to ensure that all simulation start with the 
-    # same baseline population 
-    population=copy.deepcopy(list_in[1])
-    
-    # initilize the output 
-    output=[population.summary]
-    output_im=[population.im_summary]
-    output_n_newborn=[population.number_newborn]
-    output_dead=[population.dead_summary]
-    output_out=[population.out_summary]
-    output_move=[population.move_summary]
-    output_fertile=[population.women_fertile]
-    output_fertile_actual=[population.women_fertile_actual]
-    
-    for i in range(number_year):
-        population.step(model)
-        population.summarize()
-        output.append(population.summary)
-        output_im.append(population.im_summary)
-        output_n_newborn.append(population.number_newborn)
-        output_dead.append(population.dead_summary)
-        output_out.append(population.out_summary)
-        output_move.append(population.move_summary)
-        output_fertile.append(population.women_fertile)
-        output_fertile_actual.append(population.women_fertile_actual)
-       
-    res=[output, output_im, output_n_newborn, output_dead, output_out, output_move, output_fertile, output_fertile_actual]
+        # initilize the output 
+        output=[population.summary]
+        output_im=[population.im_summary]
+        output_n_newborn=[population.number_newborn]
+        output_dead=[population.dead_summary]
+        output_out=[population.out_summary]
+        output_move=[population.move_summary]
+        output_fertile=[population.women_fertile]
+        output_fertile_actual=[population.women_fertile_actual]
 
-    fs = FileClient.get_gcs_file_system()
+        for i in range(number_year):
+            population.step(model)
+            population.summarize()
+            output.append(population.summary)
+            output_im.append(population.im_summary)
+            output_n_newborn.append(population.number_newborn)
+            output_dead.append(population.dead_summary)
+            output_out.append(population.out_summary)
+            output_move.append(population.move_summary)
+            output_fertile.append(population.women_fertile)
+            output_fertile_actual.append(population.women_fertile_actual)
 
-    with fs.open(workpath+'/'+'sim_out'+sim_mark+str(sim_index)+'.pkl', mode='wb') as file:
-        pickle.dump(res, file, protocol=4)
+        res=[output, output_im, output_n_newborn, output_dead, output_out, output_move, output_fertile, output_fertile_actual]
+
+
+
+        fs = FileClient.get_gcs_file_system()
+
+        with fs.open(workpath+'/'+'sim_out'+sim_mark+str(sim_index)+'.pkl', mode='wb') as file:
+            pickle.dump(res, file, protocol=4)
+            
+    except Exception as e:
+        logger.error(e)
+        print("Exception: ", e)
 
     return sim_index
 
