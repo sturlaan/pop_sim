@@ -98,7 +98,7 @@ The work is divided into three parts:
 
 1.  data preparison
     
-    1.  Data\_check\_oct\_2020.ipynb
+    1.  Data\_check\_oct\_2022.ipynb
 
 2.  simulatoin
     
@@ -112,7 +112,7 @@ The work is divided into three parts:
 
 3.  results collection and reporting
     
-    1.  result\_collection\_oct2020.ipynb
+    1.  result\_collection\_oct2022.ipynb
 
 ### Note on parallel computation: 
 
