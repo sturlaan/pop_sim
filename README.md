@@ -118,7 +118,7 @@ with identical draws.
 
 |                  |                                                                               |                      |
 | :--------------: | :---------------------------------------------------------------------------: | :------------------: |
-|       path       |                  Folder where the input and output data lies                  | `~/Population/g2020` |
+|       path       |                  Folder where the input and output data lies                  | `~/Population/g2022` |
 |  number\_region  |                           number of unique regions                            |         356          |
 |      maxage      | maximum age (during the year, but there is no one at this age as of 31st dec) |         120          |
 | range\_fertility |                                                                               |        15-49         |
@@ -128,26 +128,32 @@ with identical draws.
 
 ### Input data for projection:
 
-the raw data can be found at ` $REGFRAM/sim/wk48/g2020.  `They are then
-transferred to the working path defined above.
+The raw data employed in the analysis are drawn from Norwegian administrative registers.
+Researchers can gain access to the data by submitting a written application to the data
+owners. Applications must be certified by The Norwegian Data Inspectorate in order
+to ensure that data are processed in a manner that protects the personal integrity of
+individuals surveyed. Conditional on this approval, Statistics Norway will then determine
+which data one may obtain in accordance with the research plan. Inquiries about access to
+data from Statistics Norway should be addressed to: mikrodata@ssb.no. More information
+is available at: https://www.ssb.no/en/omssb/tjenester-og-verktoy/data-til-forskning
+
 
 #### Base population:
 
-population.county.csv: Number of individuals by gender, age and region.
+population.csv: Number of individuals by gender, age and region.
 
 #### Fertility rate:
 
-fertility.csv: probablity of giving birth by age (15-49) and region and
-year(2020-2050)
+fertility.csv: probablity of giving birth by age (15-49), region and
+year(2022-2050)
 
 #### mortality rate:
 
-fertility.csv: probablity of giving birth by age (15-49) and region and
-year(2020-2050)
+mortality.csv: probablity of dying by age, gender, region and year(2022-2050)
 
 #### Outmigration and moving (within country) rate:
 
-migration.csv: probabilities by gender, age and region.
+migration.csv: probabilities for emigrating and moving to other regions by gender, age, region and year.
 
 #### immigrants age and gender distribution:
 
@@ -283,14 +289,8 @@ list of individuals with same characteristics.
   - Net migration – difference between in and out moves (total, and
     separately by sex & age)
     
-      - We don’t report directly this, but this can be recovered by
-        using the following relationship:
-
-pop at \(t\)+1 pop at \(t\)(net change of population)= immigrarnts
-outmigrant (net international migration)+ births deaths (net natual
-change)+ immigrarnts outmigrant (net national migration)
-
-### Summary stats:
+    
+### Summary statistics:
 
 For these out-variables we need the following summary statistics over
 all simulations for the nation, the counties and the municipalities
