@@ -71,18 +71,17 @@ The resulting population is the end-of-year population of period t. The projecti
 
 # Python implementation
 
-The python code can be found at https://github.com/statisticsnorway/pop_sim. %Best to run on
-sl\_stata\_p3 (most powerful?).% Command line: `python3.6 sim_main.py`
+The python code can be found at https://github.com/statisticsnorway/pop_sim. Command line: `python3.6 sim_main.py`
 
 ## Orgnizations
 
 The work is divided into three parts:
 
-1.  data preparison
+1.  Data preparison
     
     1.  Data\_check\_oct\_2022.ipynb
 
-2.  simulatoin
+2.  Simulation
     
     1.  sim\_main.py: The code to call up the aux file and parameter
         files to run the simulation
