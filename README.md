@@ -142,39 +142,38 @@ is available at: https://www.ssb.no/en/omssb/tjenester-og-verktoy/data-til-forsk
 
 population.csv: Number of individuals by gender, age and region.
 
-#### Fertility rate:
+#### Fertility rates:
 
 fertility.csv: probablity of giving birth by age (15-49), region and
 year(2022-2050)
 
-#### mortality rate:
+#### Mortality rates:
 
 mortality.csv: probablity of dying by age, gender, region and year(2022-2050)
 
-#### Outmigration and moving (within country) rate:
+#### Outmigration and internal moving rates:
 
 migration.csv: probabilities for emigrating and moving to other regions by gender, age, region and year.
 
-#### immigrants age and gender distribution:
+#### Immigrants age and gender distribution:
 
 distr\_immigration.csv: probablity distribution of immigrants’ age
 (0-69) and gender
 
-#### number of immigrants(outmigrants):
+#### Target number of immigrants and outmigrants:
 
 tot\_migration.csv. Note that we don’t usae nubmer of outmigrants listed
 here. The actual number is decided via random draws based on
 outmigration rate.
 
-#### moving matrix and link information:
+#### Moving matrix and link information:
 
 mov\_mat\_new.csv, link\_a.csv and link\_r.csv
 
 To reduce the moving matrix size, the individuals have been put into 20
 (agesexgroup)<span>\*</span>20 (19 regions + immigrants) cells. The
 conditional probablities moving to each region in each cell is then
-given. Thus, the mov\_mat matrix is
-(20<span>\*</span>20<span>\*</span>number\_region).
+given. Thus, the mov\_mat matrix is (20<span>\*</span>20<span>\*</span>number\_region).
 
 ## Classes
 
@@ -298,52 +297,5 @@ all simulations for the nation, the counties and the municipalities
 some reason demographers usually use 20th and 80th percentile as
 low/high alternatives.
 
-### Convergence:
 
-Evaluate how different summaries converge when the number of simulations
-increase. One suggestion is to present the evolution of mean variable
-with CI as a graph with number of simulations on the x-axis. This should
-make it easy to see if small municipalities converge slower than large
-municipalities.
 
-  - Total population at year 25 (mean & ci)
-
-  - Population of Oslo at year 25 (mean & ci)
-
-  - Population of median sized municipality at year 25 (mean & ci)
-
-  - Population of small sized municipality at year 25 (mean & ci)
-
-  - Nr children in Oslo at year 25 (mean & ci)
-
-  - Nr children in median sized municipality at year 25 (mean & ci)
-
-  - Nr children in small sized municipality at year 25 (mean & ci)
-
-### Population pyramid
-
-Done using `Pyramid_plot(datain,region,brange=200000, indx=0, dpi=90)`
-
-### Year 0, Nationwide
-
-### ear 25, Nationwide
-
-### Year 0, Bygland
-
-### Year 25, Bygland
-
-### Time trend
-
-### Convergence plot
-
-### Year 10, Oslo, all residents
-
-### Year 10, Bygland, all residents 
-
-### Year 25, Bygland, age 10-14, female
-
-### Year 25, Bygland, 80-84, female
-
-#### Year 25, Bygland, 90-94, male
-
-# Results and Discussion
