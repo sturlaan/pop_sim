@@ -1,17 +1,16 @@
-# Motivation
+# A dynamic spatial microsimulation model for population projections
 
-Build and implement a micro simulation model which can be used to
-project the population growth on municipality level for Norway.
+This project documents a dynamic spatial microsimulation model for regional population projections. This model is developed by researchers at Statistics Norway for research purposes. The model is set up for projecting the population size and composition of Norwegian municipalities, but can easily be adapted for other geographies.
 
 # Model
 
 ## Indiviudal and Population
 
-The underlying model is a dynamic discrete time micro simulation model
-that simulate individuals life events. It in principal can track
-individuals characteristics, including both demographic and
-geographical, over their life span. In our current model, the unit of
-simulation in individual. Household formation and dissolution are not
+The underlying spatial dynamic discrete-time microsimulation model
+simulates individual demographic events. The demographic and
+geographical characteristics of each individual are tracked over their life span. 
+
+In our current model, the unit of simulation in individual. Household formation and dissolution are not
 modeled.
 
 The population is represented by a collection of individuals. The
@@ -21,34 +20,28 @@ population for time period \(t\).
 ## Life events
 
 The occurrence of a life event at any given discrete time is determined
-scholastically by transition probabilities. The life events we model
-include:
+stochastically by transition probabilities. The life events modelled are:
 
-  - Aging (determnistic)
+  - Aging: Deterministic for all individual present at the end of the year
 
-  - Mortality: Based on regional specific age dependent fertility rate
+  - Mortality: Based on age- and sex-specific mortality rates for each region
 
-  - Birth: Based on Regional specific age dependent fertility rate.
+  - Birth: Based on age-specific fertility rates for the females in each region
 
-  - Migration within the country: Based on regional specific age, gender
-    dependent out-migration rate (within Norway). The destination of
-    this movement for any given individual is assumed to follow given
-    age/sex/region specific distributions. .
+  - Domestic migration (between municipalities): 
+    1. Out-migration: Based on age- and sex-specific out-migration rates for each region. 
+    2. In-migration: The destination probabilities of the domestic migrants are assigned depending on age, sex and region of departure (moving matrix).
 
-  - Out migration: based on Regional specific age, gender dependent
-    emigration rate.
+  - International migration (between municipalities): 
+    1. Emigration: Based on age- and sex-specific emigration rates for each region. 
+    2. Immigration: The destination probabilities of the immigrants are assigned depending on age and sex.
 
-  - Immigration: The number of in-migrants is given on national level.
-    Age and sex based on year specific distribution funcion. They will
-    be placed to different municipalities based on given age/sex/region
-    specific distributions.
-
-## Timing of events (revised)
+## Timing of events 
 
 During time period \(t\), we simulate life events for all individuals in
 the baseline population. The sequence of the events are the following:
 
-  - update age and time index (relative distance to the base year. note
+  - update age and time index: relative distance to the base year. note
     that due to the fact that python array index starts with 0, the time
     index of the first year of projection is set to 0)
 
