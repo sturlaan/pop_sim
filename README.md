@@ -71,8 +71,8 @@ The resulting population is the end-of-year population of period t. The projecti
 
 # Python implementation
 
-The python code can be found at \~/Population. Best to run on
-sl\_stata\_p3 (most powerful?). Command line: `python3.6 sim_main.py`
+The python code can be found at https://github.com/statisticsnorway/pop_sim. %Best to run on
+sl\_stata\_p3 (most powerful?).% Command line: `python3.6 sim_main.py`
 
 ## Orgnizations
 
