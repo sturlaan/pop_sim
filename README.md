@@ -67,8 +67,7 @@ the baseline population. The sequence of the events are the following:
 
   - Remove individuals that die or emigrate
 
-The resulting population will serve as the baseline population for
-period \(t+1\).
+The resulting population is the end-of-year population of period t. The projection is further extended by one period by repeating this procedure for the next period (t+1).
 
 # Python implementation
 
