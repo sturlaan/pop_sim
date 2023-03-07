@@ -38,44 +38,34 @@ stochastically by transition probabilities. The life events modelled are:
 
 ## Timing of events 
 
-During time period \(t\), we simulate life events for all individuals in
+During time period t, we simulate life events for all individuals in
 the baseline population. The sequence of the events are the following:
 
-  - update age and time index: relative distance to the base year. note
-    that due to the fact that python array index starts with 0, the time
-    index of the first year of projection is set to 0)
+  - Update age and time index. Increasing the age and time index by one effectivly updates the end-of-year population from period t-1 to start-of-year population for period t (age defined as end-of-year age). This is the baseline population of year t. (Note that the time index of the first year of projection is set to 0, as python array indexes start with 0.)
 
-  - Simulate the fertility events and add new borns, newborns are
-    assumed to live in the same region as their mothers.
+  - Simulate the fertility events of all women and add newborns to the same region as their mothers.
 
-  - calculate the adjustment factor for outmigration (so that the number
-    of outmigrants be the same as the CC model)
+  - Calculate the adjustment factor for emigration, so that the number
+    of outmigrants are the same, in expectation, as the model assumptions.
 
-  - add immigrants
+  - Death, emigration and internal out-migration are simulated
+    simultaneously for the individuals in the baseline population, including the newborns.
 
-  - death, outmigration and internal movement are simulated
-    simultaneously
-    
-    1.  newborns are also subject to this event.
-    
-    2.  immigrants are not
-    
-    Note that here we ”*assume that mortality, emigration and moving is
-    multinomially distributed. This means that after the number of
-    births are drawn, we can draw one uniform random variable (X) which
-    determines all the outcomes simultaneously. If 0\<X\<pr\_mort then
-    the individual dies, if pr\_mort\<X\<(pr\_mort+pr\_emig) then the
-    individual emigrates, if
-    (pr\_mort+pr\_emig)\<X\<(pr\_mort+pr\_emig+pr\_mov) then the
-    individual moves, and if (pr\_mort+pr\_emig+pr\_mov)\<X\<1 then
-    nothing happens to the individual. This should produce the same
-    expected number of events as the CC model since we ensure that only
-    one event can happen to each individual and that all events use the
-    same start-of-year population.* ”
+      ”*we assume that mortality, emigration and moving is
+      multinomially distributed. This means that after the number of
+      births are drawn, we can draw one uniform random variable (X) which
+      determines all the outcomes simultaneously. If 0\<X\<pr\_mort then
+      the individual dies, if pr\_mort\<X\<(pr\_mort+pr\_emig) then the
+      individual emigrates, if (pr\_mort+pr\_emig)\<X\<(pr\_mort+pr\_emig+pr\_mov) then the
+      individual moves, and if (pr\_mort+pr\_emig+pr\_mov)\<X\<1 then
+      nothing happens to the individual. This should produce the same
+      expected number of events as the CC model since we ensure that only
+      one event can happen to each individual and that all events use the
+      same start-of-year population.* ”
 
-  - Assign destinations for immigrants/movers
+  - Simulate and assign region destinations for immigrants and domestic movers according age, sex and origin
 
-  - Remove those who exit due to either death and emigration
+  - Remove individuals that die or emigrate
 
 The resulting population will serve as the baseline population for
 period \(t+1\).
